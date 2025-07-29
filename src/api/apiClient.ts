@@ -1,7 +1,8 @@
 import axios from 'axios';
 
 const apiClient = axios.create({
-  baseURL: 'http://localhost:3000', // La URL de tu backend NestJS
+  // CAMBIO: La URL ahora es dinámica y depende del entorno.
+  baseURL: import.meta.env.VITE_API_URL, 
   headers: {
     'Content-Type': 'application/json',
   },
@@ -21,6 +22,4 @@ apiClient.interceptors.request.use(
   },
 );
 
-// --- LÍNEA AÑADIDA ---
-// Esta línea hace que 'apiClient' sea la exportación por defecto del archivo.
 export default apiClient;
