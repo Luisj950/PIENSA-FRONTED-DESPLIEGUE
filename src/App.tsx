@@ -1,5 +1,5 @@
 // src/App.tsx
-
+// Forzando commit para Vercel
 import { Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import Navbar from './components/Navbar';
