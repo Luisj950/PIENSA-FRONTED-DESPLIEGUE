@@ -1,8 +1,10 @@
-import { io } from 'socket.io-client';
+// src/socket.ts
+import { io, Socket } from 'socket.io-client';
 
-// La URL de su backend NestJS
-const URL = 'http://localhost:3000';
+// URL del servidor de sockets, configurada en .env o en Vercel
+const URL = import.meta.env.VITE_SOCKET_URL;
 
-export const socket = io(URL, {
-  autoConnect: false, // Se conectará manualmente desde el componente
+// Exporta una instancia de socket que se conecta solo cuando tú lo llamas (autoConnect: false)
+export const socket: Socket = io(URL, {
+  autoConnect: false,
 });
