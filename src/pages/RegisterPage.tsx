@@ -15,6 +15,7 @@ const UserPlusIcon = () => (
     strokeLinecap="round" 
     strokeLinejoin="round"
     color="var(--color-primary)"
+    style={{ verticalAlign: 'bottom', marginRight: '8px' }} // Estilo para alinear mejor con el texto
   >
     <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
     <circle cx="9" cy="7" r="4" />
@@ -58,7 +59,8 @@ const RegisterPage = () => {
     <div className="page-container">
       <div className="form-container">
         <h2 className="form-title">
-          <UserPlusIcon /> Crear Cuenta
+          <UserPlusIcon />
+          Crear Cuenta
         </h2>
         <form onSubmit={handleSubmit}>
           <div className="form-group">

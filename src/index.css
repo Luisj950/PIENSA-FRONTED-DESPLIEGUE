@@ -4,7 +4,7 @@
   --color-primary-hover: #1baa80;
   --color-accent: #fd7e14;
   --color-background: #f8f9fa;
-  --color-surface: #e61616;
+  --color-surface: #ffffff; /* CAMBIADO A BLANCO */
   --color-text: #212529;
   --color-text-secondary: #6b7680;
   --color-error: #dc3545;
@@ -44,7 +44,6 @@ main {
   box-sizing: border-box;
   border-top: 5px solid var(--color-primary);
 }
-/**/
 
 .form-title {
   display: flex;
@@ -162,8 +161,6 @@ main {
 }
 
 /* --- ESTILOS PARA LA HERO SECTION DE LA PÁGINA DE INICIO --- */
-/* Este bloque ahora está en el lugar correcto */
-
 .hero-section {
   display: flex;
   align-items: center;
@@ -210,4 +207,5 @@ main {
 
 .cta-button {
   padding: 0.9rem 1.8rem;
-  border-radius: var(--border-)}
+  border-radius: var(--border-radius);
+}
