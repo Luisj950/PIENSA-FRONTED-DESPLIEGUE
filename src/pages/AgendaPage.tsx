@@ -32,6 +32,9 @@ interface CitaAPI {
 const locales = { 'es': es };
 const localizer = dateFnsLocalizer({ format, parse, startOfWeek, getDay, locales });
 
+// ✅ Se define la URL base de la API usando variables de entorno.
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 const AgendaPage = () => {
   const { token } = useAuth();
   const [veterinarios, setVeterinarios] = useState<Veterinario[]>([]);
@@ -48,8 +51,7 @@ const AgendaPage = () => {
     if (!token) return;
     const fetchVeterinarios = async () => {
       try {
-        // ✅ CORRECCIÓN CLAVE: La URL ahora es /users/contacts (la que no da error 404).
-        const response = await fetch('http://localhost:3000/users/contacts', {
+        const response = await fetch(`${API_BASE_URL}/users/contacts`, {
           headers: { 'Authorization': `Bearer ${token}` },
         });
         if (!response.ok) {
@@ -60,7 +62,7 @@ const AgendaPage = () => {
         if (data.length > 0) {
           setSelectedVetId(String(data[0].id));
         } else {
-          setLoading(false); // Si no hay vets, deja de cargar.
+          setLoading(false);
         }
       } catch (error) {
         console.error("Error al obtener veterinarios:", error);
@@ -70,15 +72,16 @@ const AgendaPage = () => {
     fetchVeterinarios();
   }, [token]);
 
+  // Obtiene las citas del veterinario seleccionado
   const fetchCitas = useCallback(async () => {
-    // Si no hay un veterinario seleccionado, no hagas nada.
     if (!selectedVetId || !token) {
       setLoading(false);
       return;
     }
     setLoading(true);
     try {
-      const response = await fetch(`http://localhost:3000/citas/veterinario/${selectedVetId}`, {
+      // ✅ CORRECCIÓN: Se usa un query parameter para filtrar por veterinario.
+      const response = await fetch(`${API_BASE_URL}/citas?veterinarioId=${selectedVetId}`, {
         headers: { 'Authorization': `Bearer ${token}` },
       });
       const data: CitaAPI[] = await response.json();
@@ -124,14 +127,19 @@ const AgendaPage = () => {
   const handleCancelarCita = async (citaId: number) => {
     if (!token) return;
     try {
-      const response = await fetch(`http://localhost:3000/citas/${citaId}/cancelar`, {
+      // ✅ CORRECCIÓN: Se usa la ruta PATCH correcta y se envía el estado en el body.
+      const response = await fetch(`${API_BASE_URL}/citas/${citaId}`, {
         method: 'PATCH',
-        headers: { 'Authorization': `Bearer ${token}` },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ estado: 'cancelada' }),
       });
       if (!response.ok) {
         throw new Error('No se pudo cancelar la cita.');
       }
-      fetchCitas(); 
+      fetchCitas();
       setModalVerAbierto(false);
     } catch (error) {
       console.error("Error al cancelar la cita:", error);
@@ -145,9 +153,9 @@ const AgendaPage = () => {
         <h1>Agenda de Citas</h1>
         <div className="filtro-veterinario">
           <label htmlFor="vet-select">Seleccionar Veterinario:</label>
-          <select 
+          <select
             id="vet-select"
-            value={selectedVetId} 
+            value={selectedVetId}
             onChange={(e) => setSelectedVetId(e.target.value)}
           >
             {veterinarios.map(vet => (
