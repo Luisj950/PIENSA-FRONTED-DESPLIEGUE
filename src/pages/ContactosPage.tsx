@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import './ContactosPage.css'; // 👈 Se importa el nuevo archivo de estilos
+import { API_BASE_URL } from '../config/api';
+import './ContactosPage.css';
 
 interface UserToList {
   id: number;
@@ -27,20 +28,24 @@ const ContactosPage = () => {
 
     const fetchUsuarios = async () => {
       try {
-        const response = await fetch('http://127.0.0.1:3000/users/contacts', {
+        const response = await fetch(`${API_BASE_URL}/users/contacts`, {
           headers: {
             'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
           },
         });
 
         if (!response.ok) {
+          if (response.status === 401) {
+            throw new Error('No autorizado. Por favor inicia sesión nuevamente.');
+          }
           throw new Error('Error al obtener los contactos del servidor.');
         }
 
         const datosReales: UserToList[] = await response.json();
         setUsuarios(datosReales);
       } catch (err: any) {
-        setError(err.message);
+        setError(err.message || 'Error desconocido al obtener contactos.');
       } finally {
         setLoading(false);
       }
