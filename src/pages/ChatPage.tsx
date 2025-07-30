@@ -16,11 +16,13 @@ interface Mensaje {
   fechaEnvio: string;
 }
 
-// ✅ 1. Interfaz para la información del receptor
 interface ReceptorInfo {
   nombres: string;
   apellidos: string;
 }
+
+// ✅ Se define la URL base de la API usando la variable de entorno.
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const ChatPage = () => {
   const { user, token } = useAuth();
@@ -29,18 +31,15 @@ const ChatPage = () => {
   
   const [mensajes, setMensajes] = useState<Mensaje[]>([]);
   const [nuevoMensaje, setNuevoMensaje] = useState('');
-  
-  // ✅ 2. Nuevo estado para guardar los datos del receptor
   const [receptorInfo, setReceptorInfo] = useState<ReceptorInfo | null>(null);
 
-  // ✅ 3. Nuevo useEffect para obtener los datos del receptor
   useEffect(() => {
     if (!receptorId || !token) return;
 
     const fetchReceptorData = async () => {
       try {
-        // Se llama al endpoint para obtener un usuario por su ID
-        const response = await fetch(`http://localhost:3000/users/${receptorId}`, {
+        // ✅ CAMBIO: Se usa la variable de entorno para la URL.
+        const response = await fetch(`${API_BASE_URL}/users/${receptorId}`, {
           headers: {
             'Authorization': `Bearer ${token}`,
           },
@@ -56,9 +55,8 @@ const ChatPage = () => {
     };
 
     fetchReceptorData();
-  }, [receptorId, token]); // Se ejecuta cuando el ID del receptor o el token cambian
+  }, [receptorId, token]);
 
-  // useEffect para la lógica del socket (se mantiene igual)
   useEffect(() => {
     if (!user || !token || !receptorId) return;
 
@@ -98,7 +96,6 @@ const ChatPage = () => {
 
   return (
     <div className="chat-container">
-      {/* ✅ 4. Se actualiza el encabezado para mostrar el nombre */}
       <div className="chat-header">
         Chateando con {receptorInfo ? `${receptorInfo.nombres} ${receptorInfo.apellidos}` : `Usuario #${receptorId}`}
       </div>

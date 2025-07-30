@@ -4,6 +4,9 @@ import { useState, useEffect, type FormEvent } from 'react';
 import Modal from 'react-modal';
 import { useAuth } from '../context/AuthContext';
 
+// ✅ Se define la URL base de la API usando la variable de entorno.
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 const TIPOS_DE_CITA = {
   CONSULTA_GENERAL: 'consulta_general',
   CIRUGIA: 'cirugia',
@@ -27,7 +30,6 @@ interface Mascota {
   nombre: string;
 }
 
-// ✅ CAMBIO IMPLEMENTADO: Se añaden estilos para el fondo del modal (overlay)
 const customStyles = {
   overlay: {
     backgroundColor: 'rgba(0, 0, 0, 0.75)',
@@ -41,7 +43,6 @@ const customStyles = {
   },
 };
 
-// Esta línea es crucial y ya la tenías, lo cual es perfecto.
 Modal.setAppElement('#root');
 
 export const ModalCrearCita = ({ isOpen, onRequestClose, onCitaCreada, fechaInicio, veterinarioId }: ModalProps) => {
@@ -53,7 +54,9 @@ export const ModalCrearCita = ({ isOpen, onRequestClose, onCitaCreada, fechaInic
 
   useEffect(() => {
     if (!token || !user) return;
-    fetch(`http://localhost:3000/mascotas/propietario/${user.sub}`, {
+    
+    // ✅ CAMBIO: Se usa la variable de entorno para la URL.
+    fetch(`${API_BASE_URL}/mascotas/propietario/${user.sub}`, {
         headers: { 'Authorization': `Bearer ${token}` }
     })
     .then(res => res.json())
@@ -81,7 +84,8 @@ export const ModalCrearCita = ({ isOpen, onRequestClose, onCitaCreada, fechaInic
     };
 
     try {
-      const response = await fetch('http://localhost:3000/citas', {
+      // ✅ CAMBIO: Se usa la variable de entorno para la URL.
+      const response = await fetch(`${API_BASE_URL}/citas`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
