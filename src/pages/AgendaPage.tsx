@@ -32,7 +32,6 @@ interface CitaAPI {
 const locales = { 'es': es };
 const localizer = dateFnsLocalizer({ format, parse, startOfWeek, getDay, locales });
 
-// ✅ Se define la URL base de la API usando variables de entorno.
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const AgendaPage = () => {
@@ -80,8 +79,8 @@ const AgendaPage = () => {
     }
     setLoading(true);
     try {
-      // ✅ CORRECCIÓN: Se usa un query parameter para filtrar por veterinario.
-      const response = await fetch(`${API_BASE_URL}/citas?veterinarioId=${selectedVetId}`, {
+      // ✅ CAMBIO: La URL ahora coincide con la ruta del backend (/citas/veterinario/:id)
+      const response = await fetch(`${API_BASE_URL}/citas/veterinario/${selectedVetId}`, {
         headers: { 'Authorization': `Bearer ${token}` },
       });
       const data: CitaAPI[] = await response.json();
@@ -127,19 +126,17 @@ const AgendaPage = () => {
   const handleCancelarCita = async (citaId: number) => {
     if (!token) return;
     try {
-      // ✅ CORRECCIÓN: Se usa la ruta PATCH correcta y se envía el estado en el body.
-      const response = await fetch(`${API_BASE_URL}/citas/${citaId}`, {
+      // ✅ CAMBIO: La URL ahora coincide con la ruta del backend (/citas/:id/cancelar)
+      const response = await fetch(`${API_BASE_URL}/citas/${citaId}/cancelar`, {
         method: 'PATCH',
         headers: {
-          'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({ estado: 'cancelada' }),
       });
       if (!response.ok) {
         throw new Error('No se pudo cancelar la cita.');
       }
-      fetchCitas();
+      fetchCitas(); 
       setModalVerAbierto(false);
     } catch (error) {
       console.error("Error al cancelar la cita:", error);
@@ -153,9 +150,9 @@ const AgendaPage = () => {
         <h1>Agenda de Citas</h1>
         <div className="filtro-veterinario">
           <label htmlFor="vet-select">Seleccionar Veterinario:</label>
-          <select
+          <select 
             id="vet-select"
-            value={selectedVetId}
+            value={selectedVetId} 
             onChange={(e) => setSelectedVetId(e.target.value)}
           >
             {veterinarios.map(vet => (
